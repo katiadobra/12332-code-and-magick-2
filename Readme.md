@@ -1,7 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Катерина Рыбалко](https://up.htmlacademy.ru/javascript/4/user/12332).
-* Наставник: `Неизвестно`.
+* Наставник: `ещё нет наставника`.
 
 ---
 
