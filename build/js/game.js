@@ -380,16 +380,89 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          // shadow
+          this.ctx.beginPath();
+          this.ctx.moveTo(355, 90);
+          this.ctx.lineTo(605, 90);
+          this.ctx.lineTo(605, 230);
+          this.ctx.lineTo(315, 250);
+          this.ctx.fill();
+        // figure
+          this.ctx.fillStyle = '#FFFFFF';
+          this.ctx.beginPath();
+          this.ctx.moveTo(350, 80);
+          this.ctx.lineTo(600, 80);
+          this.ctx.lineTo(600, 220);
+          this.ctx.lineTo(310, 240);
+          this.ctx.fill();
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillStyle = '#000';
+          this.ctx.fillText('Ты победил!', 400, 160);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          // shadow
+          this.ctx.beginPath();
+          this.ctx.moveTo(355, 90);
+          this.ctx.lineTo(605, 90);
+          this.ctx.lineTo(605, 230);
+          this.ctx.lineTo(315, 250);
+          this.ctx.fill();
+        // figure
+          this.ctx.fillStyle = '#FFFFFF';
+          this.ctx.beginPath();
+          this.ctx.moveTo(350, 80);
+          this.ctx.lineTo(600, 80);
+          this.ctx.lineTo(600, 220);
+          this.ctx.lineTo(310, 240);
+          this.ctx.fill();
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillStyle = '#000';
+          this.ctx.fillText('Ты проиграл!', 400, 160);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          // shadow
+          this.ctx.beginPath();
+          this.ctx.moveTo(355, 90);
+          this.ctx.lineTo(605, 90);
+          this.ctx.lineTo(605, 230);
+          this.ctx.lineTo(315, 250);
+          this.ctx.fill();
+        // figure
+          this.ctx.fillStyle = '#FFFFFF';
+          this.ctx.beginPath();
+          this.ctx.moveTo(350, 80);
+          this.ctx.lineTo(600, 80);
+          this.ctx.lineTo(600, 220);
+          this.ctx.lineTo(310, 240);
+          this.ctx.fill();
+
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillStyle = '#000';
+          this.ctx.fillText('Игра на паузе.', 400, 125);
+          this.ctx.fillText('Чтобы продолжить', 390, 150);
+          this.ctx.fillText('нажмите Space.', 395, 175);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          // shadow
+          this.ctx.beginPath();
+          this.ctx.moveTo(355, 90);
+          this.ctx.lineTo(605, 90);
+          this.ctx.lineTo(605, 230);
+          this.ctx.lineTo(315, 250);
+          this.ctx.fill();
+        // figure
+          this.ctx.fillStyle = '#FFFFFF';
+          this.ctx.beginPath();
+          this.ctx.moveTo(350, 80);
+          this.ctx.lineTo(600, 80);
+          this.ctx.lineTo(600, 220);
+          this.ctx.lineTo(310, 240);
+          this.ctx.fill();
+        // text
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillStyle = '#000';
+          this.ctx.fillText('Добро пожаловать в игру!', 360, 145);
+          this.ctx.fillText('Нажми Space чтобы начать.', 355, 170);
           break;
       }
     },
