@@ -238,6 +238,60 @@
     return state;
   };
 
+
+  /**
+   * Автоматический перенос текста на новую строку
+   * @param {context} Canvas context
+   * @param {text} Render text
+   * @param {marginLeft} Left render offset
+   * @param {marginTop} Top render offset
+   * @param {maxWidth} Max text width
+   * @param {lineHeight} Text line height
+   */
+  function wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight) {
+    var words = text.split(' ');
+    var countWords = words.length;
+    var line = '';
+    for (var n = 0; n < countWords; n++) {
+      var testLine = line + words[n] + ' ';
+      var testWidth = context.measureText(testLine).width;
+      if (testWidth > maxWidth) {
+        context.fillText(line, marginLeft, marginTop);
+        line = words[n] + ' ';
+        marginTop += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    context.fillText(line, marginLeft, marginTop);
+  }
+
+  /**
+   * @param {context} Canvas context
+   * Подсчет высоты текста
+   * @param {text} Render text
+   * @param {maxWidth} Max text width
+   * @param {lineHeight} Text line height
+   */
+  function calculateTextHeight(context, text, maxWidth, lineHeight) {
+    var words = text.split(' '),
+      height = 0;
+    var countWords = words.length;
+    var line = '';
+    for (var n = 0; n < countWords; n++) {
+      var testLine = line + words[n] + ' ';
+      var testWidth = context.measureText(testLine).width;
+      if (testWidth > maxWidth) {
+        line = words[n] + ' ';
+        height += lineHeight * 2;
+      } else {
+        line = testLine;
+      }
+    }
+    return height;
+  }
+
+
   /**
    * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
    * и показывает приветственный экран.
@@ -380,7 +434,11 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          // shadow
+        //Ширина фигуры
+          var text = 'Ты победил!';
+          var figureTextWidth = 600 - 310;
+          figureTextWidth -= 25;
+        // shadow
           this.ctx.beginPath();
           this.ctx.moveTo(355, 90);
           this.ctx.lineTo(605, 90);
@@ -397,10 +455,15 @@
           this.ctx.fill();
           this.ctx.font = '16px PT Mono';
           this.ctx.fillStyle = '#000';
-          this.ctx.fillText('Ты победил!', 400, 160);
+          // this.ctx.fillText('Ты победил!', 400, 160);
+
+        //Рендеринг текста с автоматическим переносом,
+        //20 - межстрочный интервал
+          wrapText(this.ctx, text, 355, 145, figureTextWidth, 20);
           break;
         case Verdict.FAIL:
-          // shadow
+          text = 'Ты проиграл!';
+        // shadow
           this.ctx.beginPath();
           this.ctx.moveTo(355, 90);
           this.ctx.lineTo(605, 90);
@@ -417,9 +480,12 @@
           this.ctx.fill();
           this.ctx.font = '16px PT Mono';
           this.ctx.fillStyle = '#000';
-          this.ctx.fillText('Ты проиграл!', 400, 160);
+        //Рендеринг текста с автоматическим переносом,
+        //20 - межстрочный интервал
+          wrapText(this.ctx, text, 355, 145, figureTextWidth, 20);
           break;
         case Verdict.PAUSE:
+          text = 'Игра на паузе.';
           // shadow
           this.ctx.beginPath();
           this.ctx.moveTo(355, 90);
@@ -438,11 +504,14 @@
 
           this.ctx.font = '16px PT Mono';
           this.ctx.fillStyle = '#000';
-          this.ctx.fillText('Игра на паузе.', 400, 125);
-          this.ctx.fillText('Чтобы продолжить', 390, 150);
-          this.ctx.fillText('нажмите Space.', 395, 175);
+          // this.ctx.fillText('Игра на паузе.', 400, 125);
+        //Рендеринг текста с автоматическим переносом,
+        //20 - межстрочный интервал
+          wrapText(this.ctx, text, 355, 145, figureTextWidth, 20);
           break;
         case Verdict.INTRO:
+          text = 'Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать.';
+          figureTextWidth = 600 - 310;
           // shadow
           this.ctx.beginPath();
           this.ctx.moveTo(355, 90);
@@ -461,8 +530,11 @@
         // text
           this.ctx.font = '16px PT Mono';
           this.ctx.fillStyle = '#000';
-          this.ctx.fillText('Добро пожаловать в игру!', 360, 145);
-          this.ctx.fillText('Нажми Space чтобы начать.', 355, 170);
+          // this.ctx.fillText('Добро пожаловать в игру!', 360, 145);
+          // this.ctx.fillText('Нажми Space чтобы начать.', 355, 170);
+        //Рендеринг текста с автоматическим переносом,
+        //20 - межстрочный интервал
+          wrapText(this.ctx, text, 355, 145, figureTextWidth, 20);
           break;
       }
     },
