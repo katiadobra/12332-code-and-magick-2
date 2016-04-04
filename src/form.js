@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-
+  /** @constant {number} */
   var DEFAULT_MARK = 3;
   var mark = DEFAULT_MARK;
 
@@ -33,6 +33,10 @@
     formContainer.classList.add('invisible');
   };
 
+/**
+ * @function
+ * @name formValidation
+ */
   var formValidation = function() {
     var name = formReviewName.value;
     var text = formReviewText.value;
@@ -62,14 +66,23 @@
 
   };
 
+/**
+ * Вызываем валидацию по загрузке страницы
+ */
+  formValidation();
 
+/**
+ * Вызываем валидацию при изменении оценки
+ */
   formReviewRatingMarks.addEventListener('change', function(e) {
     mark = e.target.value;
     formValidation();
   });
 
+/**
+ * Вызываем валидацию при изменении имени
+ * и текста отзыва
+ */
   formReviewName.addEventListener('input', formValidation);
-
   formReviewText.addEventListener('input', formValidation);
-  formValidation();
 })();
