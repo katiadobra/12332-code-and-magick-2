@@ -1,5 +1,4 @@
 'use strict';
 
-require('./form');
-require('./check');
-require('./game');
+require('./form.js');
+require('./game.js');
