@@ -10,7 +10,7 @@ module.exports = {
   entry: './src/main.js',
 
   output: {
-    filename: './build/js/main.js'
+    filename: isDevelopmentVersion ? './js/main.js' : './build/js/main.js'
   },
 
   resolve: {

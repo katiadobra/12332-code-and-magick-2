@@ -3,22 +3,18 @@
 (function() {
 
   var DEFAULT_MARK = 3;
+  var mark = DEFAULT_MARK;
 
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
 
   var formReview = document.querySelector('.review-form');
-
   var formReviewRatingMarks = document.querySelector('.review-form-group-mark');
   var formReviewName = formReview.querySelector('#review-name');
   var formReviewSubmit = formReview.querySelector('.review-submit');
-  var mark = DEFAULT_MARK;
-
 
   var formReviewText = formReview.querySelector('#review-text');
-  // var formReviewFields = formReview.querySelector('.review-fields');
-
   var reviewNameLabel = formReview.querySelector('.review-fields-name');
   var reviewTextLabel = formReview.querySelector('.review-fields-text');
   var reviewFormControl = formReview.querySelector('.review-form-control.review-fields');
@@ -76,25 +72,4 @@
 
   formReviewText.addEventListener('input', formValidation);
   formValidation();
-
-
-  // formReviewRatingMarks.onchange = function() {
-  //   getMark();
-  //   console.log('mark on change');
-  // };
-
-  // formReviewName.oninput = function() {
-  //   console.log('name on change');
-  // };
-
-  // formReviewText.oninput = function() {
-  //   console.log('text on change');
-  // };
-
-  // formReview.addEventListener('input', function() {
-  //   console.log('input on change');
-
-  // });
-
-
 })();
