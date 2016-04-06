@@ -1,9 +1,12 @@
 'use strict';
 
+
 (function() {
   /** @constant {number} */
   var DEFAULT_MARK = 3;
   var mark = DEFAULT_MARK;
+
+  var browserCookies = require('browser-cookies');
 
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
@@ -22,21 +25,26 @@
   formReviewName.required = true;
   formReviewSubmit.disabled = true;
 
-
+  /**
+   * @param {Event} evt
+   */
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.remove('invisible');
   };
 
+  /**
+   * @param {Event} evt
+   */
   formCloseButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.add('invisible');
   };
 
-/**
- * @function
- * @name formValidation
- */
+  /**
+   * @function
+   * @name formValidation
+   */
   var formValidation = function() {
     var name = formReviewName.value;
     var text = formReviewText.value;
@@ -63,26 +71,46 @@
       reviewFormControl.classList.add('invisible');
       formReviewSubmit.disabled = false;
     }
-
   };
 
-/**
- * Вызываем валидацию по загрузке страницы
- */
-  formValidation();
+  /**
+   * Записываем значения полей из cookies, если они есть
+   */
+  formReviewName.value = browserCookies.get('name') || formReviewName.value;
 
-/**
- * Вызываем валидацию при изменении оценки
- */
-  formReviewRatingMarks.addEventListener('change', function(e) {
-    mark = e.target.value;
+
+  /**
+   * Вызываем валидацию по загрузке страницы
+   */
+  formValidation();
+  mark = browserCookies.get('mark') || DEFAULT_MARK;
+  /**
+   * Вызываем валидацию при изменении оценки
+   * @param {Event} evt
+   */
+  formReviewRatingMarks.addEventListener('change', function(evt) {
+    mark = evt.target.value;
     formValidation();
+
+    browserCookies.set('mark', mark);
   });
 
-/**
- * Вызываем валидацию при изменении имени
- * и текста отзыва
- */
+  /**
+   * Вызываем валидацию при изменении имени
+   * и текста отзыва
+   */
   formReviewName.addEventListener('input', formValidation);
   formReviewText.addEventListener('input', formValidation);
+
+  /**
+   * @param {Event} evt
+   */
+  formReview.onsubmit = function(evt) {
+    evt.preventDefault();
+
+    browserCookies.set('name', formReviewName.value);
+    browserCookies.set('mark', mark);
+
+    this.submit();
+  };
 })();
