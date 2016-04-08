@@ -4,7 +4,6 @@
 (function() {
   /** @constant {number} */
   var DEFAULT_MARK = 3;
-  var mark = DEFAULT_MARK;
 
   var browserCookies = require('browser-cookies');
 
@@ -21,6 +20,16 @@
   var reviewNameLabel = formReview.querySelector('.review-fields-name');
   var reviewTextLabel = formReview.querySelector('.review-fields-text');
   var reviewFormControl = formReview.querySelector('.review-form-control.review-fields');
+
+  var mark = browserCookies.get('mark') || DEFAULT_MARK;
+  var inputRadio = formReviewRatingMarks.querySelectorAll('input[type="radio"]');
+
+  for (var i = 0; i < inputRadio.length; i++) {
+    if (inputRadio[i].value === mark) {
+      inputRadio[i].checked = true;
+      break;
+    }
+  }
 
   formReviewName.required = true;
   formReviewSubmit.disabled = true;
@@ -83,7 +92,6 @@
    * Вызываем валидацию по загрузке страницы
    */
   formValidation();
-  mark = browserCookies.get('mark') || DEFAULT_MARK;
   /**
    * Вызываем валидацию при изменении оценки
    * @param {Event} evt
@@ -93,7 +101,7 @@
     formValidation();
 
     browserCookies.set('mark', mark);
-  });
+  }, true);
 
   /**
    * Вызываем валидацию при изменении имени
@@ -107,6 +115,7 @@
    */
   formReview.onsubmit = function(evt) {
     evt.preventDefault();
+    console.log(formReviewName.value, mark);
 
     browserCookies.set('name', formReviewName.value);
     browserCookies.set('mark', mark);
