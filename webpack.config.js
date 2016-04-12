@@ -1,6 +1,7 @@
 'use strict';
 
 var isDevelopmentVersion = process.argv[1].split('/').slice(-1)[0].indexOf('dev') > -1;
+console.log("isDevelopmentVersion", isDevelopmentVersion);
 
 module.exports = {
   devServer: {

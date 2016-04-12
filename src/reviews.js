@@ -26,7 +26,8 @@ reviewsFilter.classList.add('invisible');
  * @param {HTMLElement} container
  * @return {HTMLElement}
  */
-var getReviewElement = function(data, container) {
+var getReviewElement = function(data) {
+  var container = reviewsContainer;
   var clonedReview = elementToClone.cloneNode(true);
 
   /*
@@ -97,13 +98,15 @@ var getReviews = function(callback) {
   /* Создаём новый объект XMLHttpReques */
   var xhr = new XMLHttpRequest();
 
-  xhr.onload = function(evt) {
-    var preloader = document.querySelector('.reviews');
-    var requestObj = evt.target;
-    var response = requestObj.response;
-    var loadedData = JSON.parse(response);
-    preloader.classList.add('reviews-list-loading');
-    callback(loadedData);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        callback(null, JSON.parse(xhr.response));
+      } else {
+        // Response code !== 200
+        callback(xhr.statusText, null);
+      }
+    }
   };
 
   /* Конфигурируем его: GET-запрос на нужный URL */
@@ -123,11 +126,19 @@ var renderReviews = function(reviews) {
    * @param {HTMLElement}
    */
   reviews.forEach( function(review) {
-    getReviewElement(review, reviewsContainer);
+    getReviewElement(review);
   });
 };
 
-getReviews(function(loadedReviews) {
-  reviews = loadedReviews;
-  renderReviews(reviews);
+
+var preloader = document.querySelector('.reviews');
+preloader.classList.add('reviews-list-loading');
+
+getReviews(function(err, loadedReviews) {
+  preloader.classList.remove('reviews-list-loading');
+  if (err) {
+    preloader.classList.add('reviews-load-failure');
+  } else {
+    renderReviews(loadedReviews);
+  }
 });
