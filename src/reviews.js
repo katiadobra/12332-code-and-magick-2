@@ -5,6 +5,10 @@ var reviewsFilter = document.querySelector('.reviews-filter');
 var templateElement = document.querySelector('#review-template');
 var reviewsContainer = document.querySelector('.reviews-list');
 var elementToClone;
+/** @constant {number} */
+var IMG_LOAD_TIMEOUT = 10000;
+/** @constant {string} */
+var HOTELS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 
 if ('content' in templateElement) {
   elementToClone = templateElement.content.querySelector('.review');
@@ -50,7 +54,6 @@ var getReviewElement = function(data, container) {
    */
   var reviewImg = new Image();
   var imgLoadTimeout;
-  var IMG_LOAD_TIMEOUT = 10000;
 
   /*
    * При успешной загрузке картинки,
@@ -89,9 +92,42 @@ var getReviewElement = function(data, container) {
   return clonedReview;
 };
 
+/** @param {function(Array.<Object>)} callback */
+var getReviews = function(callback) {
+  /* Создаём новый объект XMLHttpReques */
+  var xhr = new XMLHttpRequest();
+
+  xhr.onload = function(evt) {
+    var preloader = document.querySelector('.reviews');
+    var requestObj = evt.target;
+    var response = requestObj.response;
+    var loadedData = JSON.parse(response);
+    preloader.classList.add('reviews-list-loading');
+    callback(loadedData);
+  };
+
+  /* Конфигурируем его: GET-запрос на нужный URL */
+  xhr.open('GET', HOTELS_LOAD_URL);
+
+  /* Отправляем запрос */
+  xhr.send();
+};
+
 /**
- * @param {HTMLElement}
+ * @param {Array.<Object>}
+ * принимает на вход параметр reviews,
+ * который представляет собой абстрактный массив отелей любого вида.
  */
-window.reviews.forEach( function(review) {
-  getReviewElement(review, reviewsContainer);
+var renderReviews = function(reviews) {
+  /**
+   * @param {HTMLElement}
+   */
+  reviews.forEach( function(review) {
+    getReviewElement(review, reviewsContainer);
+  });
+};
+
+getReviews(function(loadedReviews) {
+  reviews = loadedReviews;
+  renderReviews(reviews);
 });
