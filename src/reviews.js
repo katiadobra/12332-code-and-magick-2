@@ -130,7 +130,9 @@ var renderReviews = function(reviews) {
   });
 };
 
-
+/*
+ * Скрывает прелоадер до загрузки списка отзывов
+ */
 var preloader = document.querySelector('.reviews');
 preloader.classList.add('reviews-list-loading');
 
