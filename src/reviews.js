@@ -146,7 +146,6 @@ var renderReviews = function(reviews1) {
 
 var getFilteredReviews = function(reviews1, filter) {
   var reviewsForFilter = reviews1.slice(0);
-  console.log(reviews1);
 
   switch (filter) {
     case Filter.RECENT:
@@ -209,6 +208,7 @@ getReviews(function(err, loadedReviews) {
     preloader.classList.add('reviews-load-failure');
   } else {
     setFiltersEnabled();
-    renderReviews(loadedReviews);
+    // renderReviews(loadedReviews);
+    renderReviews(getFilteredReviews(loadedReviews, DEFAULT_FILTER));
   }
 });
