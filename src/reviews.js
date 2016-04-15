@@ -170,12 +170,12 @@ var getFilteredReviews = function(reviews1, filter) {
       break;
     case Filter.POPULAR:
       reviewsForFilter.sort(function(a, b) {
-        return a.review_usefulness - b.review_usefulness;
+        return b.review_usefulness - a.review_usefulness;
       });
       break;
-    default:
-      reviewsForFilter = reviews;
-      break;
+    // default:
+    //   reviewsForFilter = reviews;
+    //   break;
   }
 
   return reviewsForFilter;
