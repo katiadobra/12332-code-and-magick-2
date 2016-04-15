@@ -10,6 +10,19 @@ var IMG_LOAD_TIMEOUT = 10000;
 /** @constant {string} */
 var HOTELS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 
+var reviews = [];
+
+var Filter = {
+  'ALL': 'reviews-all',
+  'RECENT': 'reviews-recent',
+  'GOOD': 'reviews-good',
+  'BAD': 'reviews-bad',
+  'POPULAR': 'reviews-popular'
+};
+
+/** @constant {Filter} */
+var DEFAULT_FILTER = Filter.ALL;
+
 if ('content' in templateElement) {
   elementToClone = templateElement.content.querySelector('.review');
 } else {
@@ -26,8 +39,7 @@ reviewsFilter.classList.add('invisible');
  * @param {HTMLElement} container
  * @return {HTMLElement}
  */
-var getReviewElement = function(data) {
-  var container = reviewsContainer;
+var getReviewElement = function(data, container) {
   var clonedReview = elementToClone.cloneNode(true);
 
   /*
@@ -121,12 +133,67 @@ var getReviews = function(callback) {
  * принимает на вход параметр reviews,
  * который представляет собой абстрактный массив отелей любого вида.
  */
-var renderReviews = function(reviews) {
+var renderReviews = function(reviews1) {
+  reviewsContainer.innerHTML = '';
+
   /**
    * @param {HTMLElement}
    */
-  reviews.forEach( function(review) {
-    getReviewElement(review);
+  reviews1.forEach( function(review) {
+    getReviewElement(review, reviewsContainer);
+  });
+};
+
+var getFilteredReviews = function(reviews1, filter) {
+  var reviewsForFilter = reviews1.slice(0);
+  console.log(reviews1);
+
+  switch (filter) {
+    case Filter.RECENT:
+      reviewsForFilter.sort(function(a, b) {
+        console.log(a.recent, b.recent);
+        return a.recent - b.recent;
+      });
+      break;
+    case Filter.GOOD:
+      // reviewsForFilter.sort(function(a, b) {
+      //   console.log(a.rating, b.rating);
+      //   return a.rating - b.rating;
+      // });
+      reviewsForFilter = reviews;
+      console.log('GOOD');
+      break;
+    case Filter.BAD:
+      // reviewsForFilter.sort(function(a, b) {
+      //   return b.rating - a.rating;
+      // });
+      reviewsForFilter = reviews;
+      break;
+    case Filter.POPULAR:
+      reviewsForFilter.sort(function(a, b) {
+        return a.review_usefulness - b.review_usefulness;
+      });
+      break;
+    default:
+      reviewsForFilter = reviews;
+      break;
+  }
+
+  return reviewsForFilter;
+};
+
+/** @param {string} filter */
+var setFilterEnabled = function(filter) {
+  // debugger;
+  var filteredReviews = getFilteredReviews(reviews, filter);
+  renderReviews(filteredReviews);
+};
+
+var setFiltersEnabled = function() {
+  reviewsFilter.addEventListener('click', function(evt) {
+    if (evt.target.classList.contains('reviews-filter-item')) {
+      setFilterEnabled(evt.target.htmlFor);
+    }
   });
 };
 
@@ -141,6 +208,7 @@ getReviews(function(err, loadedReviews) {
   if (err) {
     preloader.classList.add('reviews-load-failure');
   } else {
+    setFiltersEnabled();
     renderReviews(loadedReviews);
   }
 });
