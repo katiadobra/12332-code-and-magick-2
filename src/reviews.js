@@ -9,6 +9,10 @@ var elementToClone;
 var IMG_LOAD_TIMEOUT = 10000;
 /** @constant {string} */
 var HOTELS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
+/** @constant {number} */
+var MILLISEC_ONE_DAY = 1000 * 60 * 60 * 24;
+
+var RECENT_DATE = 14 * MILLISEC_ONE_DAY;
 
 var reviews = [];
 
@@ -19,7 +23,6 @@ var Filter = {
   'BAD': 'reviews-bad',
   'POPULAR': 'reviews-popular'
 };
-
 /** @constant {Filter} */
 var DEFAULT_FILTER = Filter.ALL;
 
@@ -133,49 +136,44 @@ var getReviews = function(callback) {
  * принимает на вход параметр reviews,
  * который представляет собой абстрактный массив отелей любого вида.
  */
-var renderReviews = function(reviews1) {
+var renderReviews = function(reviewsTemplate) {
   reviewsContainer.innerHTML = '';
 
   /**
    * @param {HTMLElement}
    */
-  reviews1.forEach( function(review) {
+  reviewsTemplate.forEach( function(review) {
     getReviewElement(review, reviewsContainer);
   });
 };
 
-var getFilteredReviews = function(reviews1, filter) {
-  var reviewsForFilter = reviews1.slice(0);
+var getFilteredReviews = function(reviewsList, filter) {
+  var reviewsForFilter = reviewsList.slice(0);
 
   switch (filter) {
     case Filter.RECENT:
       reviewsForFilter.sort(function(a, b) {
-        console.log(a.recent, b.recent);
-        return a.recent - b.recent;
+        return new Date(b.date) - new Date(a.date);
       });
+      console.log(reviewsForFilter);
       break;
     case Filter.GOOD:
-      // reviewsForFilter.sort(function(a, b) {
-      //   console.log(a.rating, b.rating);
-      //   return a.rating - b.rating;
-      // });
-      reviewsForFilter = reviews;
-      console.log('GOOD');
-      break;
+      return reviewsForFilter.filter(function(cReview) {
+        return cReview.rating >= 3;
+      }).sort(function(a, b) {
+        return b.rating - a.rating;
+      });
     case Filter.BAD:
-      // reviewsForFilter.sort(function(a, b) {
-      //   return b.rating - a.rating;
-      // });
-      reviewsForFilter = reviews;
-      break;
+      return reviewsForFilter.filter(function(cReview) {
+        return cReview.rating <= 2;
+      }).sort(function(a, b) {
+        return a.rating - b.rating;
+      });
     case Filter.POPULAR:
       reviewsForFilter.sort(function(a, b) {
         return b.review_usefulness - a.review_usefulness;
       });
       break;
-    // default:
-    //   reviewsForFilter = reviews;
-    //   break;
   }
 
   return reviewsForFilter;
@@ -207,8 +205,8 @@ getReviews(function(err, loadedReviews) {
   if (err) {
     preloader.classList.add('reviews-load-failure');
   } else {
+    reviews = loadedReviews;
     setFiltersEnabled();
-    // renderReviews(loadedReviews);
-    renderReviews(getFilteredReviews(loadedReviews, DEFAULT_FILTER));
+    renderReviews(getFilteredReviews(reviews, DEFAULT_FILTER));
   }
 });
