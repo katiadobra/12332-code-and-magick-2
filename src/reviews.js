@@ -149,14 +149,18 @@ var renderReviews = function(reviewsTemplate) {
 
 var getFilteredReviews = function(reviewsList, filter) {
   var reviewsForFilter = reviewsList.slice(0);
+  var startDate = new Date();
+  var lastTwoWeeks = startDate.setDate(startDate.getDate() - 14);
 
   switch (filter) {
     case Filter.RECENT:
       reviewsForFilter.sort(function(a, b) {
         return new Date(b.date) - new Date(a.date);
       });
-      console.log(reviewsForFilter);
-      break;
+      return reviewsForFilter.filter(function(review) {
+        console.log(reviewsForFilter);
+        return new Date(review.date) > lastTwoWeeks;
+      });
     case Filter.GOOD:
       return reviewsForFilter.filter(function(cReview) {
         return cReview.rating >= 3;
@@ -181,7 +185,6 @@ var getFilteredReviews = function(reviewsList, filter) {
 
 /** @param {string} filter */
 var setFilterEnabled = function(filter) {
-  // debugger;
   var filteredReviews = getFilteredReviews(reviews, filter);
   renderReviews(filteredReviews);
 };
