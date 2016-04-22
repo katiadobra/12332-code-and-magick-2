@@ -10,9 +10,6 @@ var IMG_LOAD_TIMEOUT = 10000;
 /** @constant {string} */
 var HOTELS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 /** @constant {number} */
-var MILLISEC_ONE_DAY = 1000 * 60 * 60 * 24;
-
-var RECENT_DATE = 14 * MILLISEC_ONE_DAY;
 
 var reviews = [];
 
