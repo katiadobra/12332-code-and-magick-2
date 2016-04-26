@@ -4,6 +4,7 @@ var reviewsFilter = document.querySelector('.reviews-filter');
 
 var templateElement = document.querySelector('#review-template');
 var reviewsContainer = document.querySelector('.reviews-list');
+var moreBtn = document.querySelector('.reviews-controls-more');
 var elementToClone;
 /** @constant {number} */
 var IMG_LOAD_TIMEOUT = 10000;
@@ -11,8 +12,13 @@ var IMG_LOAD_TIMEOUT = 10000;
 var HOTELS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 /** @constant {number} */
 
+/** @type {Array.<Object>} */
 var reviews = [];
 
+/** @type {Array.<Object>} */
+var filteredReviews = [];
+
+/** @enum {number} */
 var Filter = {
   'ALL': 'reviews-all',
   'RECENT': 'reviews-recent',
@@ -20,8 +26,14 @@ var Filter = {
   'BAD': 'reviews-bad',
   'POPULAR': 'reviews-popular'
 };
+
 /** @constant {Filter} */
 var DEFAULT_FILTER = Filter.ALL;
+/** @constant {number} */
+var PAGE_SIZE = 3;
+
+/** @type {number} */
+var pageNumber = 0;
 
 if ('content' in templateElement) {
   elementToClone = templateElement.content.querySelector('.review');
@@ -29,9 +41,7 @@ if ('content' in templateElement) {
   elementToClone = templateElement.querySelector('.review');
 }
 
-/*
- * Скрывает филтры до загрузки списка отзывов
- */
+/* Скрывает филтры до загрузки списка отзывов */
 reviewsFilter.classList.add('invisible');
 
 /**
@@ -42,9 +52,7 @@ reviewsFilter.classList.add('invisible');
 var getReviewElement = function(data, container) {
   var clonedReview = elementToClone.cloneNode(true);
 
-  /*
-   * Number of rating stars
-   */
+  /* Number of rating stars */
   if (data.rating > 1) {
     if (data.rating === 2) {
       clonedReview.querySelector('.review-rating').classList.add('review-rating-two');
@@ -56,22 +64,16 @@ var getReviewElement = function(data, container) {
       clonedReview.querySelector('.review-rating').classList.add('review-rating-five');
     }
   }
-  /*
-   * Review text
-   */
+
+  /* Review text */
   clonedReview.querySelector('.review-text').textContent = data.description;
   container.appendChild(clonedReview);
 
-  /*
-   * Review Avatar
-   */
+  /* Review Avatar */
   var reviewImg = new Image();
   var imgLoadTimeout;
 
-  /*
-   * При успешной загрузке картинки,
-   * удаляется timeout
-   */
+  /* При успешной загрузке картинки, удаляется timeout */
   reviewImg.onload = function() {
     clearTimeout(imgLoadTimeout);
     var img = clonedReview.querySelector('.review-author');
@@ -88,9 +90,7 @@ var getReviewElement = function(data, container) {
 
   reviewImg.src = data.author.picture;
 
-  /*
-   * Показывает фильтры при загрузке списка отзывов
-   */
+  /* Показывает фильтры при загрузке списка отзывов */
   reviewsFilter.classList.remove('invisible');
 
   /*
@@ -129,18 +129,43 @@ var getReviews = function(callback) {
 };
 
 /**
- * @param {Array.<Object>}
- * принимает на вход параметр reviews,
- * который представляет собой абстрактный массив отелей любого вида.
+ * @param {Array} reviews
+ * @param {number} page
+ * @param {number} pageSize
+ * @return {boolean}
  */
-var renderReviews = function(reviewsTemplate) {
-  reviewsContainer.innerHTML = '';
+var isNextPageAvailible = function(reviewsArr, page, pageSize) {
+  return page < Math.floor(reviewsArr.length / pageSize);
+};
+
+var setBtnMoreEnabled = function() {
+  moreBtn.addEventListener('click', function() {
+    if (isNextPageAvailible(reviews, pageNumber, PAGE_SIZE)) {
+      pageNumber++;
+      renderReviews(filteredReviews, pageNumber);
+    }
+  });
+};
+
+/**
+ * @param {Array.<Object>} reviews
+ * @param {number} page
+ * @param {boolean=} replace
+ */
+var renderReviews = function(reviewsTemplate, page, replace) {
+  if (replace) {
+    reviewsContainer.innerHTML = '';
+  }
+
+  var from = page * PAGE_SIZE;
+  var to = from + PAGE_SIZE;
 
   /**
    * @param {HTMLElement}
    */
-  reviewsTemplate.forEach( function(review) {
+  reviewsTemplate.slice(from, to).forEach( function(review) {
     getReviewElement(review, reviewsContainer);
+    moreBtn.classList.remove('invisible');
   });
 };
 
@@ -155,7 +180,6 @@ var getFilteredReviews = function(reviewsList, filter) {
         return new Date(b.date) - new Date(a.date);
       });
       return reviewsForFilter.filter(function(review) {
-        console.log(reviewsForFilter);
         return new Date(review.date) > lastTwoWeeks;
       });
     case Filter.GOOD:
@@ -182,8 +206,10 @@ var getFilteredReviews = function(reviewsList, filter) {
 
 /** @param {string} filter */
 var setFilterEnabled = function(filter) {
-  var filteredReviews = getFilteredReviews(reviews, filter);
-  renderReviews(filteredReviews);
+  filteredReviews = getFilteredReviews(reviews, filter);
+  /* сбрасывает номер страницы перед фильтрацией */
+  pageNumber = 0;
+  renderReviews(filteredReviews, pageNumber, true);
 };
 
 var setFiltersEnabled = function() {
@@ -207,6 +233,7 @@ getReviews(function(err, loadedReviews) {
   } else {
     reviews = loadedReviews;
     setFiltersEnabled();
-    renderReviews(getFilteredReviews(reviews, DEFAULT_FILTER));
+    renderReviews(getFilteredReviews(reviews, DEFAULT_FILTER), pageNumber);
+    setBtnMoreEnabled();
   }
 });
