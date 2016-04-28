@@ -140,9 +140,13 @@ var isNextPageAvailible = function(reviewsArr, page, pageSize) {
 
 var setBtnMoreEnabled = function() {
   moreBtn.addEventListener('click', function() {
-    if (isNextPageAvailible(reviews, pageNumber, PAGE_SIZE)) {
+    if (isNextPageAvailible(filteredReviews, pageNumber, PAGE_SIZE)) {
+
       pageNumber++;
       renderReviews(filteredReviews, pageNumber);
+    }
+    if (!isNextPageAvailible(filteredReviews, pageNumber, PAGE_SIZE)) {
+      moreBtn.classList.add('invisible');
     }
   });
 };
@@ -232,6 +236,7 @@ getReviews(function(err, loadedReviews) {
     preloader.classList.add('reviews-load-failure');
   } else {
     reviews = loadedReviews;
+    filteredReviews = loadedReviews;
     setFiltersEnabled();
     renderReviews(getFilteredReviews(reviews, DEFAULT_FILTER), pageNumber);
     setBtnMoreEnabled();
