@@ -827,13 +827,15 @@
   var setScrollEnabled = function() {
     var scrollTimeout;
 
-    window.addEventListener('scroll', function(evt) {
+    window.addEventListener('scroll', function() {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(function() {
-
-      }, 100);
+        clouds.style.backgroundPosition = -window.pageYOffset + 'px';
+      }, 40);
     });
   };
+
+  setScrollEnabled();
 
   window.Game = Game;
   window.Game.Verdict = Verdict;
