@@ -1,6 +1,7 @@
 'use strict';
 
 (function() {
+  var clouds = document.querySelector('.header-clouds');
   /**
    * @const
    * @type {number}
@@ -273,23 +274,23 @@
    * @param {maxWidth} Max text width
    * @param {lineHeight} Text line height
    */
-  function calculateTextHeight(context, text, maxWidth, lineHeight) {
-    var words = text.split(' '),
-      height = 0;
-    var countWords = words.length;
-    var line = '';
-    for (var n = 0; n < countWords; n++) {
-      var testLine = line + words[n] + ' ';
-      var testWidth = context.measureText(testLine).width;
-      if (testWidth > maxWidth) {
-        line = words[n] + ' ';
-        height += lineHeight * 2;
-      } else {
-        line = testLine;
-      }
-    }
-    return height;
-  }
+  // function calculateTextHeight(context, text, maxWidth, lineHeight) {
+  //   var words = text.split(' '),
+  //     height = 0;
+  //   var countWords = words.length;
+  //   var line = '';
+  //   for (var n = 0; n < countWords; n++) {
+  //     var testLine = line + words[n] + ' ';
+  //     var testWidth = context.measureText(testLine).width;
+  //     if (testWidth > maxWidth) {
+  //       line = words[n] + ' ';
+  //       height += lineHeight * 2;
+  //     } else {
+  //       line = testLine;
+  //     }
+  //   }
+  //   return height;
+  // }
 
 
   /**
@@ -510,7 +511,7 @@
           wrapText(this.ctx, text, 355, 145, figureTextWidth, 20);
           break;
         case Verdict.INTRO:
-          text = 'Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать. Добро пожаловать в игру! Нажми Space чтобы начать.';
+          text = 'Добро пожаловать в игру! Нажми Space чтобы начать. ';
           figureTextWidth = 600 - 310;
           // shadow
           this.ctx.beginPath();
@@ -821,6 +822,17 @@
       window.removeEventListener('keydown', this._onKeyDown);
       window.removeEventListener('keyup', this._onKeyUp);
     }
+  };
+
+  var setScrollEnabled = function() {
+    var scrollTimeout;
+
+    window.addEventListener('scroll', function(evt) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(function() {
+
+      }, 100);
+    });
   };
 
   window.Game = Game;
