@@ -835,23 +835,27 @@
   var ElementInvisible = function() {
     var gameBlock = document.querySelector('.demo');
     if (!isElementsVisible(gameBlock)) {
+      console.log('pause');
       game.setGameStatus(Game.Verdict.PAUSE);
     }
   };
 
   var setScrollEnabled = function() {
     var clouds = document.querySelector('.header-clouds');
-    var scrollTimeout;
+    var wait = false;
 
     if (ElementInvisible) {
       window.addEventListener('scroll', function() {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(function() {
+        if (!wait) {
           clouds.style.backgroundPosition = -window.pageYOffset + 'px';
-        }, 40);
+          wait = true;
+
+          setTimeout(function() {
+            wait = false;
+          }, 40);
+        }
       });
     }
-
   };
 
   setScrollEnabled();
