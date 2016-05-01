@@ -823,6 +823,8 @@
     }
   };
 
+  var gameBlock = document.querySelector('.demo');
+  var clouds = document.querySelector('.header-clouds');
 
   /**
    * @param {} element
@@ -833,14 +835,12 @@
   };
 
   var ElementInvisible = function() {
-    var gameBlock = document.querySelector('.demo');
     if (!isElementsVisible(gameBlock)) {
       game.setGameStatus(Game.Verdict.PAUSE);
     }
   };
 
   var setScrollEnabled = function() {
-    var clouds = document.querySelector('.header-clouds');
     var scrollTimeout;
 
     if (ElementInvisible) {
